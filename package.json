@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-   "cypress:open": "cypress open" 
+    "cypress:open": "cypress open"
   },
   "keywords": [],
   "author": "",
@@ -11,5 +11,8 @@
   "description": "",
   "devDependencies": {
     "cypress": "^14.4.0"
+  },
+  "dependencies": {
+    "dotenv": "^16.5.0"
   }
 }
