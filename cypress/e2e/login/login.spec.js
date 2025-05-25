@@ -11,7 +11,7 @@ describe('Login Page Tests', () => {
   });
 
   it('When fields are empty, mandatory warning messages are displayed.', () => {
-    loginPage.clickConfirmButton();            // mora postojati ta funkcija u page objectu
-    loginPage.assertMandatoryLoginFields();    // mora postojati ova funkcija u page objectu
+    loginPage.clickConfirmButton();            
+    loginPage.assertMandatoryLoginFields();   
   });
 });
