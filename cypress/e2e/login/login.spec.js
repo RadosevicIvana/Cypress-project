@@ -1,7 +1,7 @@
 const loginPage = require('../../pages/loginPage');
 
 describe('Login Page Tests', () => {
-  // Pre svakog testa otvaramo login stranicu
+  // Before each test we are visiting the site
   beforeEach(() => {
     loginPage.visit();
   });
@@ -10,8 +10,39 @@ describe('Login Page Tests', () => {
     loginPage.assertLoginElementsVisible();
   });
 
-  it('When fields are empty, mandatory warning messages are displayed.', () => {
-    loginPage.clickConfirmButton();            
-    loginPage.assertMandatoryLoginFields();   
+  it('When fields are empty, mandatory warning messages are displayed and user can not log in.', () => {
+    loginPage.clickConfirmButton();
+    loginPage.assertMandatoryLoginFields();
   });
+
+  it('Invalid email format triggers warning message and user can not log in.', () => {
+    loginPage.fillEmail(loginPage.invalidEmail);
+    loginPage.fillPassword(loginPage.fakePassword);
+    loginPage.clickConfirmButton();
+    loginPage.assertInvalidEmailFormatMessage();
+  });
+
+  it('Password shorter than 6 characters triggers warning message and user can not log in', () => {
+    loginPage.fillEmail(Cypress.env('email'));
+    loginPage.fillPassword(loginPage.shortPassword);
+    loginPage.clickConfirmButton();
+    loginPage.assertPasswordLengthValidation();
+
+  })
+
+  it('Server error message present if the user is not registered', () => {
+    loginPage.fillEmail(Cypress.env('email'));
+    loginPage.fillPassword(loginPage.fakePassword);
+    loginPage.clickConfirmButton();
+    loginPage.assertServerErrorMessage();
+
+  })
+
+  it('Registered user can successfully log in', () => {
+    loginPage.fillEmail(Cypress.env('email'));
+    loginPage.fillPassword(Cypress.env('password'));
+    loginPage.clickConfirmButton();
+    loginPage.assertSuccessfulLogin();
+
+  })
 });
