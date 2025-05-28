@@ -69,7 +69,7 @@ class LoginPage {
 
   }
   assertSuccessfulLogin() {
-    cy.url({ timeout: 5000 }).should('include', this.expectedUrlAfterLogin);
+    cy.url({ timeout: 3000 }).should('include', this.expectedUrlAfterLogin);
   }
 
 }

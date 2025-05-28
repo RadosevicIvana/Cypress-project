@@ -1,9 +1,16 @@
 Cypress.Commands.add('loginViaAPI', () => {
+  const loginUrl = Cypress.env('loginRequestLink');
+  const bearer = Cypress.env('bearerToken');
+
+
+  console.log('LOGIN URL: ' , loginUrl);
+  console.log('BEARER TOKEN: ', bearer);
+
   cy.request({
     method: 'POST',
-    url: Cypress.env('loginRequestLink'),
+    url: loginUrl,
     headers: {
-      Authorization: `Bearer ${Cypress.env('bearerToken')}`,
+      Authorization: `Bearer ${bearer}`,
       'Content-Type': 'application/json'
     },
     body: {
@@ -12,12 +19,23 @@ Cypress.Commands.add('loginViaAPI', () => {
     }
   }).then((response) => {
     expect(response.status).to.eq(200);
+    console.log('Response body:', JSON.stringify(response.body));
 
-    // Ako backend automatski NE postavlja cookie, dodaj ručno:
-    cy.setCookie('token', response.body.token);
-    console.log('Received token:', response.body.token);
+    const token = response.body.token;
+    if (!token) {
+      throw new Error('Token not found in response body');
+    }
 
-    // Ako backend već postavi cookie sam (set-cookie), možda nije ni potrebno dodatno ručno
+    cy.setCookie('token', token);
+    console.log('Received token:', token);
+
+
+
+    // // Ako backend automatski NE postavlja cookie, dodaj ručno:
+    // cy.setCookie('token', response.body.token);
+    // cy.log('Received token:', response.body.token);
+
+    // // Ako backend već postavi cookie sam (set-cookie), možda nije ni potrebno dodatno ručno
   });
 });
 
