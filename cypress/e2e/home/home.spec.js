@@ -9,6 +9,11 @@ describe('Home Page tests', () => {
   });
 
   it('Posts are present on the Home page', () => {
-    homePage.assertPostsFeedAreVisible();
+    homePage.assertAllPostsHaveBasicContent();
   });
+
+ it('All posts contain expected content', () => {
+  homePage.assertAllPostsHaveBasicContent();
+});
+  
 });

@@ -1,37 +1,47 @@
-class HomePage{
+class HomePage {
 
-    getPostFeed(){
-    return cy.get('.home__main__feed__post.card');
-}
-
-getPostImage(post) {
-    return post.find('#author-avatar'); 
-  }
-getUserName(post) {
-    return post.find('.user-details__username'); 
+  getPostsContainer() {
+    return cy.get('.home__main__feed');
   }
 
- getFullName(post) {
+  getAllPosts() {
+     return cy.get('.home__main__feed__post.card').not(':first');//skipping first post
+  }
+
+  getPostImage(post) {
+    return post.find('img#author-avatar'); // jer je jedini img unutar posta i uvek se nalazi prvi
+  }
+
+  getPostUserName(post) {
+    return post.find('.user-details__username');
+  }
+
+  getPostFullName(post) {
     return post.find('.user-details__fullName');
-  } 
-
-  getPostTime(post) {
+  }
+  getPostTimestamp(post) {
     return post.find('.post__informations__timePosted');
   }
- getContent(post) {
-    return post.find('.home__main__feed__post__body');
-  }
-  getLikeButton(post) {
-    return post.find('.home__main__feed__post__like');
+  getLikeCommentsSection(post) {
+    return post.find('.post__actions');
   }
 
-
-
-
-assertPostsFeedAreVisible(){
-     this.getPostFeed()
+  assertPostsContainerIsVisible() {
+    this.getPostsContainer()
       .should('exist')
-      .and('have.length.at.least', 1);
+      .and('have.length.at.least', 2);
+  }
+  
+   assertAllPostsHaveBasicContent() {
+    this.getAllPosts().each(($post) => {
+      cy.wrap($post).within(() => {
+        this.getPostImage($post).should('be.visible');
+        this.getPostUsername($post).should('be.visible');
+        this.getPostFullName($post).should('be.visible');
+        this.getPostTimestamp($post).should('be.visible');
+        this.getPostActions($post).should('be.visible');
+      });
+    });
   }
 
 }

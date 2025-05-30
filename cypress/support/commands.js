@@ -2,10 +2,6 @@ Cypress.Commands.add('loginViaAPI', () => {
   const loginUrl = Cypress.env('loginRequestLink');
   const bearer = Cypress.env('bearerToken');
 
-
-  console.log('LOGIN URL: ' , loginUrl);
-  console.log('BEARER TOKEN: ', bearer);
-
   cy.request({
     method: 'POST',
     url: loginUrl,
