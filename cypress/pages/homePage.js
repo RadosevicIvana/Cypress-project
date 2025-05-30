@@ -1,11 +1,7 @@
 class HomePage {
 
-  getPostsContainer() {
-    return cy.get('.home__main__feed');
-  }
-
   getAllPosts() {
-     return cy.get('.home__main__feed__post.card').not(':first');//skipping first post
+    return cy.get('.home__main__feed__post.card').not(':first');//skipping first post
   }
 
   getPostImage(post) {
@@ -26,24 +22,119 @@ class HomePage {
     return post.find('.post__actions');
   }
 
-  assertPostsContainerIsVisible() {
-    this.getPostsContainer()
-      .should('exist')
-      .and('have.length.at.least', 2);
+  assertPostsArePresent() {
+    this.getAllPosts().should('have.length.at.least', 1);
   }
-  
-   assertAllPostsHaveBasicContent() {
+
+  getLikeButton(post) {
+    return post.find('button[aria-label="Post action button"]').has('svg[data-icon="heart"]');
+  }
+
+  getCommentButton(post) {
+    return post.find('button[aria-label="Post action button"]').has('svg[data-icon="comment"]');
+  }
+
+  getCommentsModalHeader() {
+    return cy.get('.commentsModal__header.modal-header');
+  }
+
+  clickLikeOnFirstRealPost() {
+    this.getAllPosts().eq(0).then(($post) => {
+      const likeBtn = this.getLikeButton($post);
+      cy.wrap(likeBtn)
+        .scrollIntoView()
+        .click();
+    });
+  }
+
+  clickCommentOnFirstRealPost() {
+    this.getAllPosts().eq(0).then(($post) => {
+      const commentBtn = this.getCommentButton($post);
+      cy.wrap(commentBtn)
+        .scrollIntoView()
+        .click();
+    });
+
+  }
+
+  assertAllPostsHaveBasicContent() {
     this.getAllPosts().each(($post) => {
       cy.wrap($post).within(() => {
-        this.getPostImage($post).should('be.visible');
-        this.getPostUsername($post).should('be.visible');
-        this.getPostFullName($post).should('be.visible');
-        this.getPostTimestamp($post).should('be.visible');
-        this.getPostActions($post).should('be.visible');
+        cy.wrap(this.getPostImage($post))
+          .scrollIntoView()
+          .should('be.visible');
+        cy.wrap(this.getPostUserName($post))
+          .scrollIntoView()
+          .should('be.visible');
+        cy.wrap(this.getPostFullName($post))
+          .scrollIntoView()
+          .should('be.visible');
+        cy.wrap(this.getPostTimestamp($post))
+          .scrollIntoView()
+          .should('be.visible');
+        cy.wrap(this.getLikeCommentsSection($post))
+          .scrollIntoView()
+          .should('be.visible');
       });
     });
   }
 
+  assertLikeAndCommentButtonsArePresentInFirstRealPost() {
+    this.getAllPosts().eq(0).then(($post) => {
+      const likeBtn = this.getLikeButton($post);
+      const commentBtn = this.getCommentButton($post);
+      cy.wrap(likeBtn)
+        .scrollIntoView()
+        .should('exist')
+        .and('be.visible');
+
+      cy.wrap(commentBtn)
+        .scrollIntoView()
+        .should('exist')
+        .and('be.visible');
+    });
+  }
+
+  assertUserCanLikeFirstRealPost() {
+    this.getAllPosts().eq(0).then(($post) => {
+      const likeBtn = this.getLikeButton($post);
+
+      cy.wrap(likeBtn)
+        .scrollIntoView()
+        .should('have.class', 'btn-tertiary');
+
+      cy.wrap(likeBtn).click();
+
+      cy.wrap(likeBtn)
+        .should('have.class', 'btn-primary');
+    });
+  }
+
+    assertUserCanUnlikeFirstRealPost() {
+    this.getAllPosts().eq(0).then(($post) => {
+      const likeBtn = this.getLikeButton($post);
+
+      cy.wrap(likeBtn)
+        .scrollIntoView()
+        .should('have.class', 'btn-primary');
+
+      cy.wrap(likeBtn).click();
+
+      cy.wrap(likeBtn)
+        .should('have.class', 'btn-tertiary');
+    });
+  }
+
+
+  assertCommentsModalHeaderIsVisible() {
+    this.getCommentsModalHeader()
+      .should('exist')
+      .and('be.visible');
+  }
+
+
+
 }
+
 
 module.exports = new HomePage();
