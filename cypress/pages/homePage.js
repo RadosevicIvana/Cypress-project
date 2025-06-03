@@ -1,43 +1,43 @@
 class HomePage {
-
-  commentText = 'New comment text added here';
+  commentText = "New comment text added here";
+  postText = "New post text here";
 
   getAllPosts() {
-    return cy.get('.home__main__feed__post.card').not(':first'); //first post is skipped
+    return cy.get(".home__main__feed__post.card").not(":first"); //first post is skipped
   }
 
   getPostImage(post) {
-    return post.find('img#author-avatar');
+    return post.find("img#author-avatar");
   }
 
   getPostUserName(post) {
-    return post.find('.user-details__username');
+    return post.find(".user-details__username");
   }
 
   getPostFullName(post) {
-    return post.find('.user-details__fullName');
+    return post.find(".user-details__fullName");
   }
   getPostTimestamp(post) {
-    return post.find('.post__informations__timePosted');
+    return post.find(".post__informations__timePosted");
   }
   getLikeCommentsSection(post) {
-    return post.find('.post__actions');
-  }
-
-  assertPostsArePresent() {
-    this.getAllPosts().should('have.length.at.least', 1);
+    return post.find(".post__actions");
   }
 
   getLikeBtn(post) {
-    return post.find('button[aria-label="Post action button"]').has('svg[data-icon="heart"]');
+    return post
+      .find('button[aria-label="Post action button"]')
+      .has('svg[data-icon="heart"]');
   }
 
   getCommentBtn(post) {
-    return post.find('button[aria-label="Post action button"]').has('svg[data-icon="comment"]');
+    return post
+      .find('button[aria-label="Post action button"]')
+      .has('svg[data-icon="comment"]');
   }
 
   getCommentsModalWndw() {
-    return cy.get('.commentsModal__header.modal-header');
+    return cy.get(".commentsModal__header.modal-header");
   }
 
   getCommentInputField() {
@@ -45,172 +45,241 @@ class HomePage {
   }
 
   getCommentSubmitBtn() {
-    return cy.get('button#createInputSubmitBtn');
+    return cy.get("button#createInputSubmitBtn");
   }
 
   getNewCommentPost() {
-    return cy.get('.post__comments');
+    return cy.get(".post__comments");
   }
 
   getNewestCommentTxt() {
-    return cy.get('.post__description.post__description--modal').last();
+    return cy.get(".post__description.post__description--modal").last();
   }
   getCommentDeleteBtn(commentText) {
     return cy
-      .get('.post__comments__list__comment') // take all comments
-      .contains('.post__description--modal', commentText) // finding the one with the value from commentText
-      .parents('.post__comments__list__comment') // making sure that we are on the parent 
-      .find('button.post__deleteBtn') // find the button
+      .get(".post__comments__list__comment") // take all comments
+      .contains(".post__description--modal", commentText) // finding the one with the value from commentText
+      .parents(".post__comments__list__comment") // making sure that we are on the parent
+      .find("button.post__deleteBtn") // find the button
       .first(); // fallback, making sure that first delete button is clicked
   }
 
   getCloseModalBtn() {
-    return cy.get('.commentsModal__header.modal-header button.btn-close[aria-label="Close"]');
+    return cy.get(
+      '.commentsModal__header.modal-header button.btn-close[aria-label="Close"]'
+    );
   }
 
+  getCreatePostSection() {
+    return cy.get('input[placeholder="What\'s happening"]').parents(".card");
+  }
+  getProfileImage(parent = cy) {
+    return parent.get('img[aria-label="User Profile Image"]');
+  }
 
+  getPostInputField(parent = cy) {
+    return parent.get("input.form-control");
+  }
+
+  getRecordingBtn(parent = cy) {
+    return parent.get("#startRecordingButton");
+  }
+
+  getSubmitPostBtn(parent = cy) {
+    return parent.get("#submitPostBtn");
+  }
+
+  getDeleteRecordingBtn(parent = cy) {
+    return parent.get("button.btn-danger");
+  }
+
+  getStopRecordingBtn(parent = cy) {
+    return parent.get("#stopRecordingButton");
+  }
+
+  getPauseRecordingBtn(parent = cy) {
+    return parent.get("#pauseRecordingButton");
+  }
 
   clickLikeOnFirstRealPost() {
-    this.getAllPosts().eq(0).then(($post) => {
-      const likeBtn = this.getLikeBtn($post);
-      cy.wrap(likeBtn)
-        .scrollIntoView()
-        .click();
-    });
+    this.getAllPosts()
+      .eq(0)
+      .then(($post) => {
+        const likeBtn = this.getLikeBtn($post);
+        cy.wrap(likeBtn).scrollIntoView().click();
+      });
   }
 
   clickCommentBtn() {
-    this.getAllPosts().eq(0).then(($post) => {
-      const commentBtn = this.getCommentBtn($post);
-      cy.wrap(commentBtn)
-        .scrollIntoView()
-        .click();
-    });
-
+    this.getAllPosts()
+      .eq(0)
+      .then(($post) => {
+        const commentBtn = this.getCommentBtn($post);
+        cy.wrap(commentBtn).scrollIntoView().click();
+      });
   }
 
+  clickRecordBtn() {
+    this.getCreatePostSection().within(() => {
+      this.getRecordingBtn(cy).should("be.visible").click();
+    });
+  }
+  clickStopRecordingBtn() {
+    this.getCreatePostSection().within(() => {
+      this.getStopRecordingBtn(cy)
+        .scrollIntoView()
+        .should("be.visible")
+        .click();
+    });
+  }
 
+  assertPostsArePresent() {
+    this.getAllPosts().should("have.length.at.least", 1);
+  }
 
   assertAllPostsHaveExpectedContent() {
     this.getAllPosts().each(($post) => {
       cy.wrap($post).within(() => {
-        cy.wrap(this.getPostImage($post))
-          .scrollIntoView()
-          .should('be.visible');
+        cy.wrap(this.getPostImage($post)).scrollIntoView().should("be.visible");
         cy.wrap(this.getPostUserName($post))
           .scrollIntoView()
-          .should('be.visible');
+          .should("be.visible");
         cy.wrap(this.getPostFullName($post))
           .scrollIntoView()
-          .should('be.visible');
+          .should("be.visible");
         cy.wrap(this.getPostTimestamp($post))
           .scrollIntoView()
-          .should('be.visible');
+          .should("be.visible");
         cy.wrap(this.getLikeCommentsSection($post))
           .scrollIntoView()
-          .should('be.visible');
+          .should("be.visible");
       });
     });
   }
 
   assertLikeAndCommentBtnsPresentInPost() {
-    this.getAllPosts().eq(0).then(($post) => {
-      const likeBtn = this.getLikeBtn($post);
-      const commentBtn = this.getCommentBtn($post);
-      cy.wrap(likeBtn)
-        .scrollIntoView()
-        .should('exist')
-        .and('be.visible');
+    this.getAllPosts()
+      .eq(0)
+      .then(($post) => {
+        const likeBtn = this.getLikeBtn($post);
+        const commentBtn = this.getCommentBtn($post);
+        cy.wrap(likeBtn).scrollIntoView().should("exist").and("be.visible");
 
-      cy.wrap(commentBtn)
-        .scrollIntoView()
-        .should('exist')
-        .and('be.visible');
-    });
+        cy.wrap(commentBtn).scrollIntoView().should("exist").and("be.visible");
+      });
   }
 
   assertUserCanLikePost() {
-    this.getAllPosts().eq(0).then(($post) => {
-      const likeBtn = this.getLikeBtn($post);
+    this.getAllPosts()
+      .eq(0)
+      .then(($post) => {
+        const likeBtn = this.getLikeBtn($post);
 
-      cy.wrap(likeBtn)
-        .scrollIntoView()
-        .should('have.class', 'btn-tertiary');
+        cy.wrap(likeBtn).scrollIntoView().should("have.class", "btn-tertiary");
 
-      cy.wrap(likeBtn).click();
+        cy.wrap(likeBtn).click();
 
-
-      cy.wrap(likeBtn)
-        .should('have.class', 'btn-primary');
-    });
+        cy.wrap(likeBtn).should("have.class", "btn-primary");
+      });
   }
 
   assertUserCanUnlikePost() {
-    this.getAllPosts().eq(0).then(($post) => {
-      const likeBtn = this.getLikeBtn($post);
+    this.getAllPosts()
+      .eq(0)
+      .then(($post) => {
+        const likeBtn = this.getLikeBtn($post);
 
-      cy.wrap(likeBtn)
-        .scrollIntoView()
-        .should('have.class', 'btn-primary');
+        cy.wrap(likeBtn).scrollIntoView().should("have.class", "btn-primary");
 
-      cy.wrap(likeBtn).click();
+        cy.wrap(likeBtn).click();
 
-      cy.wrap(likeBtn)
-        .should('have.class', 'btn-tertiary');
-    });
+        cy.wrap(likeBtn).should("have.class", "btn-tertiary");
+      });
   }
 
-
   assertCommentModalWndwVisible() {
-    this.getCommentsModalWndw()
-      .should('exist')
-      .and('be.visible');
+    this.getCommentsModalWndw().should("exist").and("be.visible");
   }
 
   assertUserCanCommentPost() {
     this.clickCommentBtn();
     this.getCommentInputField()
-      .should('exist')
-      .and('be.visible')
+      .should("exist")
+      .and("be.visible")
       .type(this.commentText);
 
-    this.getCommentSubmitBtn()
-      .should('exist')
-      .and('be.visible')
-      .click();
+    this.getCommentSubmitBtn().should("exist").and("be.visible").click();
 
-    this.getNewCommentPost()
-      .should('exist')
-      .and('be.visible')
+    this.getNewCommentPost().should("exist").and("be.visible");
 
     this.getNewestCommentTxt()
-      .should('be.visible')
-      .and('have.text', this.commentText);
-
+      .should("be.visible")
+      .and("have.text", this.commentText);
   }
   assertUserCanDeleteComment() {
-    this.getCommentDeleteBtn(this.commentText)
-      .should('be.visible')
-      .click();
+    this.getCommentDeleteBtn(this.commentText).should("be.visible").click();
 
-
-    cy.contains('.post__description.post__description--modal', this.commentText)
-      .should('not.exist');
+    cy.contains(
+      ".post__description.post__description--modal",
+      this.commentText
+    ).should("not.exist");
   }
 
   assertUserCanCloseCommentModal() {
-    this.getCommentsModalWndw().should('exist').and('be.visible');
+    this.getCommentsModalWndw().should("exist").and("be.visible");
 
-    this.getCloseModalBtn()
-      .should('be.visible')
-      .click();
+    this.getCloseModalBtn().should("be.visible").click();
 
-    this.getCommentsModalWndw().should('not.exist');
+    this.getCommentsModalWndw().should("not.exist");
+  }
+  assertCreatePostSectionVisible() {
+    this.getCreatePostSection()
+      .should("be.visible")
+      .within(() => {
+        this.getProfileImage(cy).should("be.visible");
+        this.getPostInputField(cy).should("be.visible");
+        this.getRecordingBtn(cy).should("be.visible");
+        this.getSubmitPostBtn(cy).should("be.visible").and("be.disabled");
+      });
   }
 
+  assertUserCanNotPostTextOnly(postText) {
+    this.getCreatePostSection().within(() => {
+      this.getSubmitPostBtn(cy)
+        .invoke("attr", "class")
+        .then((classBefore) => {
+          //saving the button attribute before the test
 
+          this.getPostInputField(cy).click().clear().type(postText); //interact with the text field
 
+          cy.wait(1000);
+
+          this.getSubmitPostBtn(cy)
+            .invoke("attr", "class")
+            .then((classAfter) => {
+              //checking the button sttribute after the text is entered
+              if (classAfter !== classBefore) {
+                //if they are not same the test will fail
+                throw new Error(
+                  `Button class changed from "${classBefore}" to "${classAfter}"` //logging error
+                );
+              }
+            });
+        });
+    });
+  }
+
+  assertUserCanRecordStopVideo() {
+    this.getRecordingBtn().should("be.visible");
+    this.getRecordingBtn().click();
+    cy.wait(9000);
+    this.getRecordingBtn().should("not.exist");
+    this.getStopRecordingBtn().should("be.visible");
+    this.getDeleteRecordingBtn().should("be.visible");
+    this.clickStopRecordingBtn();
+    this.getStopRecordingBtn().should("not.exist");
+    this.getPauseRecordingBtn().should("be.visible");
+  }
 }
-
 
 module.exports = new HomePage();

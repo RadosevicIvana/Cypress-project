@@ -23,11 +23,8 @@ describe("Home Page", () => {
   });
 
   describe("Home Page - Like option", () => {
-    it("User can like the first visible post and like is visible", () => {
+    it("User can like and unlike the first visible post and like is visible", () => {
       homePage.assertUserCanLikePost();
-    });
-
-    it("User can unlike the first visible post and like is not visible anymore", () => {
       homePage.assertUserCanUnlikePost();
     });
   });
@@ -38,18 +35,25 @@ describe("Home Page", () => {
       homePage.assertCommentModalWndwVisible();
     });
 
-    it("User can comment post and entered comment is saved", () => {
+    it("User can comment post, entered comment is saved, user can delete comment", () => {
       homePage.assertUserCanCommentPost();
-    });
-
-    it("User can delete the comment", () => {
-      homePage.clickCommentBtn();
       homePage.assertUserCanDeleteComment();
     });
 
     it("User can close the Comment modal window ", () => {
       homePage.clickCommentBtn();
       homePage.assertUserCanCloseCommentModal();
+    });
+  });
+  describe("Home Page - create post option", () => {
+    it("Create post option contains expected elements", () => {
+      homePage.assertCreatePostSectionVisible();
+    });
+    it("User can't post only text", () => {
+      homePage.assertUserCanNotPostTextOnly(homePage.postText);
+    });
+    it.only("User can click on Recording button", () => {
+      homePage.assertUserCanRecordStopVideo();
     });
   });
 });
