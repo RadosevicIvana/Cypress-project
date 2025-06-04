@@ -331,7 +331,7 @@ class HomePage {
   assertNoErrorOnPage() {
     cy.document().then((doc) => {
       if (doc.getElementById("_next_error_")) {
-        throw new Error("Application error: prikazan je _next_error_ ekran!");
+        throw new Error("Application error! Test fail!");
       }
     });
   }
