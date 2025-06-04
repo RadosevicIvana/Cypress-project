@@ -45,15 +45,25 @@ describe("Home Page", () => {
       homePage.assertUserCanCloseCommentModal();
     });
   });
+
   describe("Home Page - create post option", () => {
     it("Create post option contains expected elements", () => {
       homePage.assertCreatePostSectionVisible();
     });
-    it("User can't post only text", () => {
+    it("User can not post only text", () => {
       homePage.assertUserCanNotPostTextOnly(homePage.postText);
     });
-    it.only("User can click on Recording button", () => {
-      homePage.assertUserCanRecordStopVideo();
+    it("User can create recording", () => {
+      homePage.assertUserCanCreateRecording();
+    });
+    it("User can not post only recording", () => {
+      homePage.assertUserCanNotPostOnlyRecording();
+    });
+    it("User can delete recorded video", () => {
+      homePage.assertUserCanDeleteRecording();
+    });
+    it("User can post text and recording", () => {
+      homePage.assertUserCanPostTextAndRecording(homePage.postText);
     });
   });
 });

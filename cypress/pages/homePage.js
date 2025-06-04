@@ -1,6 +1,6 @@
 class HomePage {
   commentText = "New comment text added here";
-  postText = "New post text here";
+  postText = "Final test that evrything is working";
 
   getAllPosts() {
     return cy.get(".home__main__feed__post.card").not(":first"); //first post is skipped
@@ -101,6 +101,10 @@ class HomePage {
     return parent.get("#pauseRecordingButton");
   }
 
+  getFirstPost() {
+    return cy.get(".home__main__feed__post.card").eq(1);
+  }
+
   clickLikeOnFirstRealPost() {
     this.getAllPosts()
       .eq(0)
@@ -131,6 +135,12 @@ class HomePage {
         .should("be.visible")
         .click();
     });
+  }
+
+  clickStartStopRecording() {
+    this.getRecordingBtn().should("be.visible").click();
+    cy.wait(2000);
+    this.getStopRecordingBtn().scrollIntoView().should("be.visible").click();
   }
 
   assertPostsArePresent() {
@@ -269,16 +279,61 @@ class HomePage {
     });
   }
 
-  assertUserCanRecordStopVideo() {
+  assertUserCanCreateRecording() {
     this.getRecordingBtn().should("be.visible");
     this.getRecordingBtn().click();
-    cy.wait(9000);
     this.getRecordingBtn().should("not.exist");
     this.getStopRecordingBtn().should("be.visible");
     this.getDeleteRecordingBtn().should("be.visible");
     this.clickStopRecordingBtn();
     this.getStopRecordingBtn().should("not.exist");
     this.getPauseRecordingBtn().should("be.visible");
+  }
+
+  assertUserCanNotPostOnlyRecording() {
+    this.getCreatePostSection().within(() => {
+      this.getSubmitPostBtn(cy)
+        .invoke("attr", "class")
+
+        .then((classBefore) => {
+          this.clickStartStopRecording();
+
+          this.getSubmitPostBtn(cy)
+            .invoke("attr", "class")
+            .then((classAfter) => {
+              if (classAfter !== classBefore) {
+                throw new Error(
+                  `Button class changed from "${classBefore}" to "${classAfter}"`
+                );
+              }
+            });
+        });
+    });
+  }
+
+  assertUserCanDeleteRecording() {
+    this.clickStartStopRecording();
+    this.getDeleteRecordingBtn().should("be.visible").click();
+    this.getDeleteRecordingBtn().should("not.exist");
+  }
+
+  assertUserCanPostTextAndRecording(postText) {
+    this.clickStartStopRecording();
+    this.getPostInputField().should("be.visible").clear().type(postText);
+    this.getSubmitPostBtn().should("be.visible").and("not.be.disabled").click();
+
+    this.assertNoErrorOnPage();
+
+    this.getFirstPost().within(() => {
+      cy.get(".post__description").should("contain.text", postText);
+    });
+  }
+  assertNoErrorOnPage() {
+    cy.document().then((doc) => {
+      if (doc.getElementById("_next_error_")) {
+        throw new Error("Application error: prikazan je _next_error_ ekran!");
+      }
+    });
   }
 }
 
