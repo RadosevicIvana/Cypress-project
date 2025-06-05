@@ -1,6 +1,6 @@
 class HomePage {
   commentText = "New comment text added here";
-  postText = "Final test that evrything is working";
+  postText = "[ATCY] New post text";
 
   getAllPosts() {
     return cy.get(".home__main__feed__post.card").not(":first"); //first post is skipped
